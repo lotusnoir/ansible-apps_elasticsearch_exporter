@@ -1,29 +1,48 @@
 ---
-- name: "Check for squid_exporter binary"
+- name: "Check for elasticsearch_exporter binary"
   stat:
-    path: "/usr/local/bin/squid_exporter"
+    path: "/usr/local/bin/elasticsearch_exporter"
   changed_when: false
-  register: squid_exporter_install
+  register: elasticsearch_exporter_install
 
-- when: not squid_exporter_install.stat.exists
+- when: not elasticsearch_exporter_install.stat.exists
   block:
-    - name: "Download squid_exporter..."
+    - name: "Download elasticsearch_exporter..."
       get_url:
-        url: '{{ squid_exporter_url }}'
-        dest: /usr/local/bin/
+        url: '{{ es_exporter_tgz_url }}'
+        dest: /tmp/{{ es_exporter_tgz }}
         timeout: 120
-        mode: 0755
+        mode: 0644
 
-- name: "Create systemd for squid_exporter"
+    - name: "Ensure install directory exists"
+      file:
+        path: '{{ es_exporter_install_dir }}'
+        state: directory
+
+    - name: "Unarchive elasticsearch_exporter..."
+      unarchive:
+        remote_src: yes
+        src: /tmp/{{ es_exporter_tgz }}
+        dest: '{{ es_exporter_install_dir }}'
+        extra_opts: [--strip-components=1]
+
+    - name: Copy elasticsearch_exporter binary..."
+      copy:
+        src: '{{ es_exporter_install_dir }}/elasticsearch_exporter'
+        dest: '/usr/local/bin/elasticsearch_exporter'
+        mode: '0755'
+        remote_src: yes
+
+- name: "Create systemd for elasticsearch_exporter"
   template:
-    src: squid_exporter.service
-    dest: /etc/systemd/system/
-    mode: '0644'
-  notify: "restart squid_exporter"
+    src: elasticsearch_exporter.service.j2
+    dest: /etc/systemd/system/elasticsearch_exporter.service
+    mode: '0640'
+  notify: "restart elasticsearch_exporter"
 
-- name: "Enable and Start squid_exporter.service"
+- name: "Enable and Start elasticsearch_exporter.service"
   systemd:
-    name: squid_exporter
+    name: elasticsearch_exporter
     state: started
     enabled: true
     daemon_reload: true

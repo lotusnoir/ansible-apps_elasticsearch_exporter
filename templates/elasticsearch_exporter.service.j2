@@ -1,0 +1,44 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Prometheus elasticsearch Exporter
+After=network-online.target
+StartLimitInterval=0
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/local/bin/elasticsearch_exporter \
+            --es.uri {{ es_exporter_es_uri }} \
+            --web.listen-address {{ es_exporter_web_listen_port }} \
+            --web.telemetry-path {{ es_exporter_web_telemetry_path }} \
+            {% if es_exporter_es_all is sameas true -%}
+            --es.all \
+            {% endif -%}
+            {% if es_exporter_es_indices is sameas true -%}
+            --es.indices \
+            {% endif -%}
+            {% if es_exporter_es_shards is sameas true -%}
+            --es.shards  \
+            {% endif -%}
+            {% if es_exporter_es_ssl_skip_verify is sameas true -%}
+            --es.ssl-skip-verify \
+            {% endif -%}
+            {% if es_exporter_es_ca is defined -%}
+            --es.ca {{ es_exporter_es_ca }} \
+            {% endif -%}
+            {% if es_exporter_es_client_private_key is defined -%}
+            --es.client-private-key {{ es_exporter_es_client_private_key }} \
+            {% endif -%}
+            {% if es_exporter_es_client_cert is defined  -%}
+            --es.client-cert {{ es_exporter_es_client_cert }}
+            {% endif -%}
+            --es.timeout {{ es_exporter_es_timeout }}
+
+ExecReload=/bin/kill -HUP $MAINPID
+SyslogIdentifier=elasticsearch_exporter
+RestartSec=1
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

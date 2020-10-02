@@ -1,5 +1,5 @@
 ---
-- name: "restart squid_exporter"
+- name: "restart elasticsearch_exporter"
   service:
-    name: "squid_exporter"
+    name: "elasticsearch_exporter"
     state: "restarted"
