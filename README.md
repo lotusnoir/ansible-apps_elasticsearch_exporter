@@ -11,6 +11,9 @@ Deploy [elasticsearch_exporter](https://github.com/justwatchcom/elasticsearch_ex
 | Name           | Default Value | Description                        |
 | -------------- | ------------- | -----------------------------------|
 | `es_exporter_version` | 1.1.0 | elasticsearch_exporter version |
+| `es_exporter_temp_dir` | /tmp | temporary directory to uncompress package |
+| `es_exporter_install_dir` | /usr/local/bin | directory to install binary |
+| `es_exporter_force_install` | false | force install variable |
 | `es_exporter_es_uri` | http://localhost:9200 | elasticsearch web address |
 | `es_exporter_web_listen_port` | :9123 | elasticsearch_exporter exposed port |
 | `es_exporter_web_telemetry_path` | /metrics | elasticsearch_exporter metrics path |
@@ -36,4 +39,4 @@ Deploy [elasticsearch_exporter](https://github.com/justwatchcom/elasticsearch_ex
 
 ## License
 
-This project is licensed under MIT License. See [LICENSE](/LICENSE) for more details.
+This project is licensed under Apache License. See [LICENSE](/LICENSE) for more details.
