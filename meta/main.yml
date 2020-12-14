@@ -10,9 +10,11 @@ galaxy_info:
     - name: "Ubuntu"
       versions:
         - "focal"
+        - "bionic"
     - name: "Debian"
       versions:
         - "buster"
+        - "stretch"
 
   galaxy_tags:
     - elasticsearch
