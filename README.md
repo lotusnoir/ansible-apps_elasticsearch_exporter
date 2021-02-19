@@ -47,6 +47,14 @@ Deploy [elasticsearch_exporter](https://github.com/justwatchcom/elasticsearch_ex
 	    https_proxy: "{{ https_proxy }}"
 	    no_proxy: "{{ no_proxy }}
 
+## Prometheus rules
+
+TODO
+
+## Grafana Dashboard
+
+A sample dashboard is available here: [https://grafana.com/grafana/dashboards/13562](https://grafana.com/grafana/dashboards/13562)
+
 ## License
 
 This project is licensed under Apache License. See [LICENSE](/LICENSE) for more details.
