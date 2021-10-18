@@ -10,7 +10,7 @@ Type=simple
 Restart=always
 ExecStart={{ es_exporter_install_dir }}/elasticsearch-exporter \
             --es.uri {{ es_exporter_es_uri }} \
-            --web.listen-address {{ es_exporter_web_listen_port }} \
+            --web.listen-address :{{ es_exporter_web_listen_port }} \
             --web.telemetry-path {{ es_exporter_web_telemetry_path }} \
             {% if es_exporter_es_all is sameas true -%}
             --es.all \
