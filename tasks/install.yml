@@ -1,21 +1,27 @@
 ---
 - name: "Check for elasticsearch_exporter binary"
-  stat:
+  ansible.builtin.stat:
     path: "{{ es_exporter_install_dir }}/elasticsearch-exporter"
   changed_when: false
   register: elasticsearch_exporter_install
 
-- when: not elasticsearch_exporter_install.stat.exists or es_exporter_force_install|bool
+- name: "Install tasks"
+  when: not elasticsearch_exporter_install.stat.exists or es_exporter_force_install|bool
   block:
+    - name: "Install requierements"
+      ansible.builtin.package:
+        name: ["unzip", "tar"]
+        state: present
+
     - name: "Download elasticsearch_exporter..."
-      get_url:
+      ansible.builtin.get_url:
         url: '{{ es_exporter_tgz_url }}'
         dest: '{{ es_exporter_temp_dir }}/{{ es_exporter_tgz }}'
         timeout: 60
         mode: '0644'
 
     - name: "Ensure install directory exists"
-      file:
+      ansible.builtin.file:
         path: '{{ item }}'
         state: directory
         mode: '0755'
@@ -24,7 +30,7 @@
         - '{{ es_exporter_temp_dir }}/es_exporter'
 
     - name: "Unarchive elasticsearch_exporter..."
-      unarchive:
+      ansible.builtin.unarchive:
         src: '{{ es_exporter_temp_dir }}/{{ es_exporter_tgz }}'
         dest: '{{ es_exporter_temp_dir }}/es_exporter'
         remote_src: true
@@ -32,26 +38,26 @@
         mode: '0644'
 
     - name: "Copy elasticsearch_exporter binary..."
-      copy:
+      ansible.builtin.copy:
         src: '{{ es_exporter_temp_dir }}/es_exporter/elasticsearch_exporter'
         dest: '{{ es_exporter_install_dir }}/elasticsearch-exporter'
         remote_src: true
         mode: '0755'
 
     - name: "Remove temporary directory"
-      file:
+      ansible.builtin.file:
         path: '{{ es_exporter_temp_dir }}/es_exporter'
         state: absent
 
 - name: "Create systemd for elasticsearch_exporter"
-  template:
+  ansible.builtin.template:
     src: 'elasticsearch_exporter.service.j2'
     dest: '/etc/systemd/system/elasticsearch_exporter.service'
     mode: '0640'
   notify: "restart elasticsearch_exporter"
 
 - name: "Enable and Start elasticsearch_exporter.service"
-  service:
+  ansible.builtin.service:
     name: elasticsearch_exporter
     state: started
     enabled: true
