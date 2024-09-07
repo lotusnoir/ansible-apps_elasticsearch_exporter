@@ -12,6 +12,10 @@
       ansible.builtin.package:
         name: ["unzip", "tar"]
         state: present
+      register: pkg_result
+      retries: 12
+      delay: 10
+      until: pkg_result is success
 
     - name: "Download elasticsearch_exporter..."
       ansible.builtin.get_url:
